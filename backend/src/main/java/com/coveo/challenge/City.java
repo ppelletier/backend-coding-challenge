@@ -25,18 +25,7 @@ public class City
         this.longitude = pLong;
         this.country = pCountry;
         this.admin1 = pStateOrProvince;
-    }
-
-    public City(City pCity, Double pScore)
-    {
-        this.id = pCity.id;
-        this.name =pCity.name;
-        this.ascii = pCity.ascii;
-        this.latitude = pCity.latitude;
-        this.longitude = pCity.longitude;
-        this.country = pCity.country;        
-        this.score = pScore;
-    }
+    }   
 
     
     /**

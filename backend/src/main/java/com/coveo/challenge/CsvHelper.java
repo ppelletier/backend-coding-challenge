@@ -1,14 +1,11 @@
 package com.coveo.challenge;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-
+import java.io.InputStreamReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
@@ -46,20 +43,10 @@ public class CsvHelper<T> {
 
     public List<T> readFile(String pFilePath) throws CsvHelperException {
         logger.debug("readFile: {}", pFilePath);
-
-        URL url = ClassLoader.getSystemResource(pFilePath);
-
-        if (url == null) {
-            throw new CsvHelperException(String.format("Unable to access file: %s", pFilePath));
-        }
-
-        Path path;
-        try {
-            path = Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            throw new CsvHelperException(String.format("Unable to read file: %s", pFilePath), e);
-        }
-        try (Reader reader = Files.newBufferedReader(path)) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream(pFilePath);
+               
+        try (Reader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
             HeaderColumnNameMappingStrategy<T> strategy = new HeaderColumnNameMappingStrategy<>();
             strategy.setType(typeParameterClass);
