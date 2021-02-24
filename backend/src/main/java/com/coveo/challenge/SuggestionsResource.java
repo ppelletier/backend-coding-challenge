@@ -4,10 +4,8 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.hibernate.validator.internal.util.logging.Log_.logger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,7 +25,7 @@ public class SuggestionsResource {
     private static String cityFilePath = "data/cities_canada-usa.tsv";
 
     private List<Admin1> admin1List;
-    private static String admin1FilePath = "data/Admin1CodesASCII.tsv";
+    private static String admin1FilePath = "data/admin1CodesASCII.tsv";
 
     private void loadCities() throws CsvHelperException {
         CsvHelper<City> csvHelper = new CsvHelper<>(City.class).withSeparator('\t').withIgnoreQuotations(true);
@@ -65,7 +63,7 @@ public class SuggestionsResource {
         } catch (CsvHelperException e) {
             // Last minute change...
             // TODO: fix this later...
-            logger.error("Unable to load admin1 file: {}", admin1FilePath);
+            logger.error("Unable to load admin1 file: {}, {}", admin1FilePath, e.getMessage());
         }
 
         if (list != null && !list.isEmpty()) {
@@ -85,7 +83,7 @@ public class SuggestionsResource {
                 q, latitude, longitude));
 
         try {
-
+            
             SuggestionQuery sq = new SuggestionQuery().withQuery(StringHelper.normalize(q).trim()).withLatLong(latitude,
                     longitude);
 
@@ -97,7 +95,7 @@ public class SuggestionsResource {
             SuggestionHelper<City, SuggestionQuery> sh = new SuggestionHelper<>(getCities());
             List<SuggestionWithWeight<City>> result = sh.suggestWithWeight(sq, shConfig);
 
-            // Copy the list of cities and assign their weight
+            // Create the list of result and assign their weight
             List<CitySearchResult> cityList = result.stream()
                     .map(c -> new CitySearchResult(c.item, findAdmin1Name(c.item), c.weight))
                     .collect(Collectors.toList());
@@ -113,10 +111,10 @@ public class SuggestionsResource {
         }
         // Catches all exceptions, log it and return a dummy city indicating an error
         // occured
-        catch (InvalidParameterException | MethodNotAllowedException | JsonProcessingException | CsvHelperException e) {
+        catch (InvalidParameterException | MethodNotAllowedException | JsonProcessingException | CsvHelperException | NullPointerException e) {
             logger.error("Unexpected error : {} - {}", e.getMessage(), e.getStackTrace());
 
-            return "{\"cities\":[{\"id\":-1,\"name\":\"an error has occured contact...\",\"latitude\":46.81228,\"longitude\":-71.21454,\"Score\":\"0\"}]}";
+            return "{\"cities\":[{\"id\":-1,\"name\":\"an error has occured contact Paul...\",\"latitude\":46.81228,\"longitude\":-71.21454,\"Score\":\"0\"}]}";
         }
     }
 }

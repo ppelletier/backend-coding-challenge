@@ -43,7 +43,7 @@ public class AppConfig {
                 : 1d / distance;
             return (StringHelper.normalize(c.ascii).equals(StringHelper.normalize(sq.query)) ? 0.5 : 0) + d;                 
         } else {
-            return null;
+            return 0.0;
         }
     }
 

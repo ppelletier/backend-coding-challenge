@@ -45,6 +45,10 @@ public class CsvHelper<T> {
         logger.debug("readFile: {}", pFilePath);
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(pFilePath);
+
+        if (inputStream == null) {
+            throw new CsvHelperException(String.format("Unable to open stream: %s", pFilePath));
+        }
                
         try (Reader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
