@@ -11,7 +11,7 @@ public class StringHelper {
     {
         return Normalizer
 				.normalize(s, Normalizer.Form.NFD)
-				.replaceAll("[^\\p{ASCII}]", "").toLowerCase();
+				.replaceAll("[^\\p{ASCII}]", "").toLowerCase().trim();
     }
     
     private StringHelper() {}
